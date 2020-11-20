@@ -150,7 +150,7 @@ while True:
 
     while gameIsPlaying:
         if turn == 'player':
-            # Player's turn.
+            # A vez do jogador.
             drawPlaca(thePlaca)
             move = getJogadorMove(thePlaca)
             makeMove(thePlaca, playerLetra, move)
@@ -168,7 +168,7 @@ while True:
                     turn = 'computer'
 
         else:
-            # Computer's turn.
+            # A vez co computador.
             move = getComputerMove(thePlaca, computerLetra)
             makeMove(thePlaca, computerLetra, move)
 
@@ -186,3 +186,4 @@ while True:
 
     if not jogarNovamente():
         break
+
