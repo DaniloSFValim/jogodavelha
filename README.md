@@ -1,112 +1,92 @@
-# Implementação de código em Python para simulação de um JOGO DA VELHA em que o computador sempre vence ou empata.
-
-# Importação de pacote.
+# Jogo da Velha em Python
+# Desenvolvido e adaptado por Danilo Valim
 
 import random
 
-# Início da definição de variáveis.
+def drawPlaca(placa):
+    # Esta função desenha as linhas horizontais e verticais do jogo na tela do computador.
 
-
-def drawBoard(board):
-
-    # Esta função imprime na tela as posições que deverão ser escolhidas pelo jogador, de baixo para cima, entre 1 e 9.
-
+    # A placa é uma lista de 10 strings
     print('   |   |')
-    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+    print(' ' + placa[7] + ' | ' + placa[8] + ' | ' + placa[9])
     print('   |   |')
     print('-----------')
     print('   |   |')
-    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print(' ' + placa[4] + ' | ' + placa[5] + ' | ' + placa[6])
     print('   |   |')
     print('-----------')
     print('   |   |')
-    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print(' ' + placa[1] + ' | ' + placa[2] + ' | ' + placa[3])
     print('   |   |')
 
-
-def inputjogletra():
-
-    # Dá ao jogador a opção de escolher que letra utilizar.
-
+def inputJogadorLetra():
+    # Aqui o jogador deverá digita a letra que deseja usar no jogo
+    # Retorna uma lista com a letra do jogador como o primeiro item e a letra do computador como o segundo.
     letra = ''
     while not (letra == 'X' or letra == 'O'):
-        print('Qual letra você prefere, X ou O?')
+        print('Você deve escolher uma destas letras para começar: X ou O?')
         letra = input().upper()
 
-    # O primeiro elemento da tupla é a letra do jogador, o segundo é a letra do computador.
-
+    # O primeiro elemento na tupla é a letra do jogador, o segundo é a letra do computador.
     if letra == 'X':
         return ['X', 'O']
     else:
         return ['O', 'X']
 
-
-def whoGoesFirst():
-
-    # Escolhe aleatoriamente quem vai começar.
-
+def quemVaiPrimeiro():
+    # Escolhe aleatoriamente quem vai começar o jogo.
     if random.randint(0, 1) == 0:
-        return 'computador'
+        return 'computer'
     else:
-        return 'jogador'
+        return 'player'
 
-
-def playAgain():
-
-    # Esta função reinicia o código caso o jogador opte por escolher o Sim.
-
-    print('Você gostaria de recomeçar o jogo? (sim or não)')
+def jogarNovamente():
+    # Esta função retorna True se o jogador quiser jogar novamente, caso contrário, retorna False.
+    print('Você gostaria de jogar comigo novamente? (sim ou não)')
     return input().lower().startswith('s')
 
+def makeMove(placa, letra, move):
+    placa[move] = letra
 
-def makeMove(board, letra, move):
-    board[move] = letra
+def isWinner(pl, le):
+    # Retorna Verdadeiro se o jogador tiver ganho.
+    # pl e le são abreviações de placa e letra
+    return ((pl[7] == le and pl[8] == le and pl[9] == le) or # no topo
+    (pl[4] == le and pl[5] == le and pl[6] == le) or # no meio
+    (pl[1] == le and pl[2] == le and pl[3] == le) or # no canto
+    (pl[7] == le and pl[4] == le and pl[1] == le) or # em baixo lado esquerdo
+    (pl[8] == le and pl[5] == le and pl[2] == le) or # em baixo no meio
+    (pl[9] == le and pl[6] == le and pl[3] == le) or # em baixo lado direito
+    (pl[7] == le and pl[5] == le and pl[3] == le) or # diagonal
+    (pl[9] == le and pl[5] == le and pl[1] == le)) # diagonal
 
+def getPlacaCopy(placa):
+    # Faz uma cópia do tabuleiro e retorna preenchido
+    dupePlaca = []
 
-def isWinner(bo, le):
+    for i in placa:
+        dupePlaca.append(i)
 
-    # Dada as oções do tabuleiro, esta função retorna verdadeiro caso o jogador ganhe.
+    return dupePlaca
 
-    return ((bo[7] == le and bo[8] == le and bo[9] == le)
-            or (bo[4] == le and bo[5] == le and bo[6] == le)
-            or (bo[1] == le and bo[2] == le and bo[3] == le)
-            or (bo[7] == le and bo[4] == le and bo[1] == le)
-            or (bo[8] == le and bo[5] == le and bo[2] == le)
-            or (bo[9] == le and bo[6] == le and bo[3] == le)
-            or (bo[7] == le and bo[5] == le and bo[3] == le)
-            or (bo[9] == le and bo[5] == le and bo[1] == le))
+def isSpaceFree(placa, move):
+    # Retorna verdadeiro se a jogada estiver livre no tabuleiro.
+    return placa[move] == ' '
 
-
-def getBoardCopy(board):
-
-    # Duplica o board do jogo e reapresenta.
-    dupeBoard = []
-    for i in board:
-        dupeBoard.append(i)
-    return dupeBoard
-
-
-    # Retorna verdadeiro se ainda tiver espaço no tabuleiro para jogar.
-def isSpaceFree(board, move):
-    return board[move] == ' '
-
-
-def getPlayerMove(board):
-    # Let the player type in his move.
+def getJogadorMove(placa):
+    # Libera o jogador para digitar seu movimento.
     move = ' '
-    while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(
-            board, int(move)):
-        print('Insira seu próximo movimento de 1-9')
+    while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(placa, int(move)):
+        print('Entre com seu próximo movimento? (1-9)')
         move = input()
     return int(move)
 
-
-def chooseRandomMoveFromList(board, movesList):
-    # Returns a valid move from the passed list on the passed board.
-    # Returns None if there is no valid move.
+def chooseRandomMoveFromList(placa, movesList):
+    # Retorna um movimento válido da lista de movimento do tabuleiro.
+    # Retorna nulo se não houver um movimento válido.
     possibleMoves = []
     for i in movesList:
-        if isSpaceFree(board, i):
+        if isSpaceFree(placa, i):
             possibleMoves.append(i)
 
     if len(possibleMoves) != 0:
@@ -114,98 +94,95 @@ def chooseRandomMoveFromList(board, movesList):
     else:
         return None
 
-
-def getComputerMove(board, completra):
-    # Given a board and the computer's letter, determine where to move and return that move.
-    if completra == 'X':
-        jogletra = 'O'
+def getComputerMove(placa, computerLetra):
+    # Com a letra do computador executada, etermine para onde mover.
+    if computerLetra == 'X':
+        playerLetra = 'O'
     else:
-        jogletra = 'X'
+        playerLetra = 'X'
 
-    # Here is our algorithm for our Tic Tac Toe AI:
-    # First, check if we can win in the next move
+    # Aqui está o algoritmo de IA coração do nosso jogo:
+    # Verifique se podemos vencer na próxima jogada.
     for i in range(1, 10):
-        copy = getBoardCopy(board)
+        copy = getPlacaCopy(placa)
         if isSpaceFree(copy, i):
-            makeMove(copy, completra, i)
-            if isWinner(copy, completra):
+            makeMove(copy, computerLetra, i)
+            if isWinner(copy, computerLetra):
                 return i
 
-    # Check if the player could win on his next move, and block them.
+    # Verifique se o jogador pode ganhar na próxima jogada e bloqueie.
     for i in range(1, 10):
-        copy = getBoardCopy(board)
+        copy = getPlacaCopy(placa)
         if isSpaceFree(copy, i):
-            makeMove(copy, jogletra, i)
-            if isWinner(copy, jogletra):
+            makeMove(copy, playerLetra, i)
+            if isWinner(copy, playerLetra):
                 return i
 
-    # Try to take one of the corners, if they are free.
-    move = chooseRandomMoveFromList(board, [1, 3, 7, 9])
+    # Tente pegar um dos cantos e estiverem livres.
+    move = chooseRandomMoveFromList(placa, [1, 3, 7, 9])
     if move != None:
         return move
 
-    # Try to take the center, if it is free.
-    if isSpaceFree(board, 5):
+    # Tente pegar o centro e estiver livre.
+    if isSpaceFree(placa, 5):
         return 5
 
-    # Move on one of the sides.
-    return chooseRandomMoveFromList(board, [2, 4, 6, 8])
+    # Mova para um dos lados.
+    return chooseRandomMoveFromList(placa, [2, 4, 6, 8])
 
-
-def isBoardFull(board):
+def isPlacaFull(placa):
     # Return True if every space on the board has been taken. Otherwise return False.
     for i in range(1, 10):
-        if isSpaceFree(board, i):
+        if isSpaceFree(placa, i):
             return False
     return True
 
 
-print('Seja bem vindo ao jogo da velha.')
-print('Desista enquanto é tempo...')
+print('Seja bem vindo ao Jogo da Velha')
 
 while True:
-    # Resetar o tabuleiro.
-    theBoard = [' '] * 10
-    jogletra, completra = inputjogletra()
-    turn = whoGoesFirst()
-    print(' ' + turn + ' começará.')
+    # Resetando a placa do jogo
+    thePlaca = [' '] * 10
+    playerLetra, computerLetra = inputJogadorLetra()
+    turn = quemVaiPrimeiro()
+    print('O ' + turn + ' irá começar.')
     gameIsPlaying = True
 
     while gameIsPlaying:
         if turn == 'player':
-            # Vez do jogador.
-            drawBoard(theBoard)
-            move = getPlayerMove(theBoard)
-            makeMove(theBoard, jogletra, move)
+            # Player's turn.
+            drawPlaca(thePlaca)
+            move = getJogadorMove(thePlaca)
+            makeMove(thePlaca, playerLetra, move)
 
-            if isWinner(theBoard, jogletra):
-                drawBoard(theBoard)
-                print('Hooray! You have won the game!')
+            if isWinner(thePlaca, playerLetra):
+                drawPlaca(thePlaca)
+                print('Uau! Você ganhou o jogo!')
                 gameIsPlaying = False
             else:
-                if isBoardFull(theBoard):
-                    drawBoard(theBoard)
-                    print('The game is a tie!')
+                if isPlacaFull(thePlaca):
+                    drawPlaca(thePlaca)
+                    print('O jogo terminou empatado!')
                     break
                 else:
                     turn = 'computer'
 
         else:
-            # Vez do computador.
-            move = getComputerMove(theBoard, completra)
-            makeMove(theBoard, completra, move)
+            # Computer's turn.
+            move = getComputerMove(thePlaca, computerLetra)
+            makeMove(thePlaca, computerLetra, move)
 
-            if isWinner(theBoard, completra):
-                drawBoard(theBoard)
-                print('O computador ganhou de você!')
+            if isWinner(thePlaca, computerLetra):
+                drawPlaca(thePlaca)
+                print('O computador venceu! Você perdeu.')
                 gameIsPlaying = False
             else:
-                if isBoardFull(theBoard):
-                    drawBoard(theBoard)
-                    print('The game is a tie!')
+                if isPlacaFull(thePlaca):
+                    drawPlaca(thePlaca)
+                    print('O jogo empatou!')
                     break
                 else:
                     turn = 'player'
 
-    if not playAgain():
+    if not jogarNovamente():
         break
